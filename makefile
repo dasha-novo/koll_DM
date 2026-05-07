@@ -1,19 +1,36 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -std=c99 -g -D_POSIX_C_SOURCE=200809L
+CFLAGS = -Wall -Wextra -std=c99 -g -D_POSIX_C_SOURCE=200809L -Iinclude
 TARGET = cas_system
 
-SRCS = main.c context.c natural_menu.c integer_menu.c rational_menu.c polynomial_menu.c \
-       N.c Z.c Q.c P.c \
-       readDigitN.c readDigZ.c readDigitQ.c readPoly.c
+# Файлы интерфейса
+INTERFACE = src/main.c src/context.c src/natural_menu.c src/integer_menu.c \
+            src/rational_menu.c src/polynomial_menu.c
 
-OBJS = $(SRCS:.c=.o)
+# Математические модули
+MATH = src/math/N.c src/math/Z.c src/math/Q.c src/math/P.c
+
+# Функции ввода-вывода
+IO = src/io/readDigitN.c src/io/readDigZ.c src/io/readDigitQ.c src/io/readPoly.c
+
+# Все исходники
+SRCS = $(INTERFACE) $(MATH) $(IO)
+
+# Объектные файлы будут в корне
+OBJS = $(notdir $(SRCS:.c=.o))
 
 all: $(TARGET)
 
 $(TARGET): $(OBJS)
 	$(CC) $(CFLAGS) $(OBJS) -o $(TARGET) -lm
 
-%.o: %.c
+# Правило компиляции для файлов из разных папок
+%.o: src/%.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+%.o: src/math/%.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+%.o: src/io/%.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:

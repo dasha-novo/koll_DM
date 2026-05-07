@@ -1,0 +1,7 @@
+*.o
+cas_system
+.vscode/
+*.swp
+*.swo
+*~
+*.tmp
