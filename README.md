@@ -1,0 +1,18 @@
+# Система компьютерной алгебры для длинных чисел
+
+## Сборка и запуск
+
+git clone https://github.com/dasha-novo/koll_DM.git
+cd koll_DM
+make
+./cas_system
+
+## Очистка
+make clean
+
+## Структура проекта
+
+include/    — заголовочные файлы
+src/        — исходный код
+  math/     — математические модули (N, Z, Q, P)
+  io/       — функции ввода-вывода
