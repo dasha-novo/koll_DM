@@ -6,6 +6,7 @@
 #include "N.h"
 #include "Z.h"
 
+//Осипова Евгения
 Polynomial* copy_poly(Polynomial* p) {
     if (!p) return NULL;
 
@@ -60,6 +61,7 @@ Polynomial* copy_poly(Polynomial* p) {
     return res;
 }
 
+//Колесникова Дарья
 Polynomial* ADD_PP_P(Polynomial *poly1, Polynomial *poly2) {
    if (!poly1 || !poly2) return NULL;
   
@@ -184,6 +186,7 @@ Polynomial* ADD_PP_P(Polynomial *poly1, Polynomial *poly2) {
    return result;
 }
 
+//Костромицкая Вероника
 static void negate_coeff(Q* q) {
     if (!q || !q->numerator || q->numerator[0] == '\0') return;
     if (q->numerator[0] == '-' && q->numerator[1] == '-') {
@@ -199,6 +202,7 @@ static void negate_coeff(Q* q) {
     }
 }
 
+//Костромицкая Вероника
 Polynomial* SUB_PP_P(Polynomial* P1, Polynomial* P2) {
     if (!P1 || !P2) return NULL;
 
@@ -261,6 +265,7 @@ Polynomial* SUB_PP_P(Polynomial* P1, Polynomial* P2) {
     return res;
 }
 
+//Осипова Евгения
 Polynomial* MUL_PQ_P(Polynomial* p, Q* q){
     if (!p || !q){
         printf("Memory error\n");
@@ -323,6 +328,7 @@ Polynomial* MUL_PQ_P(Polynomial* p, Q* q){
     return res;
 }
 
+//Итыгилов Архип
 Polynomial* MUL_Pxk_P(Polynomial* p, char* k){
     if (POZ_Z_D(k) == -1) return 0;
 
@@ -341,6 +347,7 @@ Polynomial* MUL_Pxk_P(Polynomial* p, char* k){
     return res;
 }
 
+//Богачева Вероника
 Q* LED_P_Q(const Polynomial* p) {
     if (!p || !p->terms || p->count == 0) {
         return NULL;
@@ -392,12 +399,14 @@ Q* LED_P_Q(const Polynomial* p) {
     return zero;
 }
 
+//Новожилова Дарья
 int cmp_natural_str(const char *a, const char *b) {
     size_t la = strlen(a), lb = strlen(b);
     if (la != lb) return la - lb;
     return strcmp(a, b);
 }
 
+//Новожилова Дарья
 char* DEG_P_N(Polynomial *p) {
     if (!p) return NULL;
 
@@ -433,6 +442,7 @@ char* DEG_P_N(Polynomial *p) {
     return max_deg;
 }
 
+//Колесникова Дарья
 Polynomial* DER_P_P(Polynomial *p) {
    if (!p) return NULL;
    if (p->count == 1 && strcmp(p->terms[0].exp, "0") == 0) {
@@ -534,6 +544,7 @@ Polynomial* DER_P_P(Polynomial *p) {
    return result;
 }
 
+//Костромицкая Вероника
 Polynomial* MUL_PP_P(Polynomial* P1, Polynomial* P2) {
     if (!P1 || !P2) return NULL;
 
@@ -576,6 +587,7 @@ Polynomial* MUL_PP_P(Polynomial* P1, Polynomial* P2) {
     return res;
 }
 
+//Осипова Евгения
 Polynomial* DIV_PP_P(Polynomial* p1, Polynomial* p2){
     if (!p1 || !p2){ printf("Memory error\n"); return NULL; }
     
@@ -725,6 +737,7 @@ Polynomial* DIV_PP_P(Polynomial* p1, Polynomial* p2){
     return Q;
 }
 
+//Осипова Евгения
 Polynomial* MOD_PP_P(Polynomial* A, Polynomial* B){
     if (!A || !B){ printf("Memory error\n"); return NULL; }
     if (B->count == 0){ 
@@ -743,6 +756,7 @@ Polynomial* MOD_PP_P(Polynomial* A, Polynomial* B){
     return R; 
 }
 
+//Костромицкая Вероника
 Polynomial* GCF_PP_P(Polynomial* A, Polynomial* B) {
     if (!A || !B) return NULL;
 
@@ -773,6 +787,7 @@ Polynomial* GCF_PP_P(Polynomial* A, Polynomial* B) {
     return A;
 }
 
+//Колесникова Дарья
 typedef struct {
    Q *multiplier;
    Polynomial *poly;
@@ -872,6 +887,7 @@ MultiplierPoly* FAC_P_Q(Polynomial *p) {
    return result;
 }
 
+//Осипова Евгения
 Polynomial* NMR_P_P(Polynomial* p){
     if (!p){ printf("Memory error\n"); return NULL; }
     if (p->count == 0){
