@@ -3,6 +3,7 @@
 #include <string.h>
 #include "N.h"
 
+//Новожилова Дарья
 int COM_NN_D(char* x, char* y){
     int lenx = strlen(x);
     int leny = strlen(y);
@@ -26,6 +27,7 @@ int COM_NN_D(char* x, char* y){
     return 0;
 }
 
+//Новожилова Дарья
 char* NZER_N_B(char* x) {
     int len = strlen(x);
    
@@ -37,6 +39,7 @@ char* NZER_N_B(char* x) {
     return "нет";
 }
 
+//Новожилова Дарья
 char* ADD_1N_N(const char* x) {
     char* copy = malloc(strlen(x) + 1);
     strcpy(copy, x);
@@ -60,6 +63,7 @@ char* ADD_1N_N(const char* x) {
     return result;
 }
 
+//Вероника Богачева
 char* ADD_NN_N(const char* a, const char* b) {
    int lenA = strlen(a);
    int lenB = strlen(b);
@@ -107,6 +111,7 @@ char* ADD_NN_N(const char* a, const char* b) {
    return result;
 }
 
+//Вероника Богачева
 char* MUL_ND_N(const char* num, char digit_char) {
    if (digit_char < '0' || digit_char > '9') {
        return NULL;
@@ -161,6 +166,7 @@ char* MUL_ND_N(const char* num, char digit_char) {
    return result;
 }
 
+//Итыгилов Архип
 char* SUB_NN_N(char *a, char *b){
    
     if(COM_NN_D(a, b) == 1) return 0;
@@ -218,6 +224,7 @@ char* SUB_NN_N(char *a, char *b){
     return 0;
 }
 
+//Итыгилов Архип
 char* MUL_Nk_N(char* a, char* k){
     int as = strlen(a);
     int kn = atoi(k);
@@ -232,6 +239,7 @@ char* MUL_Nk_N(char* a, char* k){
     return res;
 }    
 
+//Итыгилов Архип
 char* SUB_NDN_N(char* a, char* b, char k){
     char* bk = MUL_ND_N(b, k);
 
@@ -240,6 +248,7 @@ char* SUB_NDN_N(char* a, char* b, char k){
     return res;
 }
 
+//Колесникова Дарья
 char* MUL_NN_N(const char* a, const char* b) {
    int lenA = strlen(a);
    int lenB = strlen(b);
@@ -308,6 +317,7 @@ char* MUL_NN_N(const char* a, const char* b) {
    return result;
 }
 
+//Костромицкая Вероника
 char* DIV_NN_Dk(char* N, int D, int* k) {
     if (D <= 0 || D > 9 || k == NULL || N == NULL) {
         return NULL;
@@ -349,6 +359,7 @@ char* DIV_NN_Dk(char* N, int D, int* k) {
     return (final_res != NULL) ? final_res : result;
 }
 
+//Костромицкая Вероника
 char* DIV_NN_N(char* A, char* B) {
     if (!A || !B || B[0] == '\0') return NULL;
 
@@ -446,6 +457,7 @@ char* DIV_NN_N(char* A, char* B) {
     return finalQuot;
 }
 
+//Осипова Евгения
 char* MOD_NN_N(char* a, char* b){
     if (!a || !b) return NULL;
     
@@ -469,6 +481,7 @@ char* MOD_NN_N(char* a, char* b){
     return r;    
 }
 
+//Осипова Евгения
 char* GCF_NN_N(char* a, char* b){
     if(!a || !b) return NULL;
     
@@ -531,6 +544,7 @@ char* GCF_NN_N(char* a, char* b){
     return x;
 }
 
+//Осипова Евгения
 char* LCM_NN_N(char* a, char* b) {
     if (!a || !b) return NULL;
     

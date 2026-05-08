@@ -7,6 +7,7 @@
 
 #define _POSIX_C_SOURCE 200809L
 
+//Новожилова Дарья
 char* INT_Q_B(Q* q) {
     if (strcmp(q->denominator, "1") == 0) {
         return "да";
@@ -14,6 +15,7 @@ char* INT_Q_B(Q* q) {
     return "нет";
 }
 
+//Богачева Вероника
 Q* TRANS_Z_Q(const char* num) {
     if (!num) {
         return NULL;
@@ -43,6 +45,7 @@ Q* TRANS_Z_Q(const char* num) {
     return q;
 }
 
+//Богачева Вероника
 char* TRANS_Q_Z(const Q* q) {
     if (!q || !q->numerator || !q->denominator) {
         return NULL;
@@ -63,6 +66,7 @@ char* TRANS_Q_Z(const Q* q) {
     return result;
 }
 
+//Итыгилов Архип
 Q* RED_Q_Q(Q* frac){
     Q* newfrac = malloc(sizeof(Q));
     if (!newfrac) return NULL;
@@ -80,6 +84,7 @@ Q* RED_Q_Q(Q* frac){
     return newfrac;
 }
 
+//Итыгилов Архип
 Q* ADD_QQ_Q(Q* frac1, Q* frac2){
     Q* newfrac = malloc(sizeof(Q));
 
@@ -115,6 +120,7 @@ Q* ADD_QQ_Q(Q* frac1, Q* frac2){
     return redfrac;
 }
 
+//Колесникова Дарья
 Q* SUB_QQ_Q(Q* a, Q* b) {
    if (!a || !b) return NULL;
   
@@ -189,6 +195,7 @@ Q* SUB_QQ_Q(Q* a, Q* b) {
    return result;
 }
 
+//Костромицкая Вероника
 Q* MUL_QQ_Q(Q* Q1, Q* Q2) {
     if (Q1 == NULL || Q2 == NULL ||
         Q1->numerator == NULL || Q1->denominator == NULL ||
@@ -231,6 +238,7 @@ Q* MUL_QQ_Q(Q* Q1, Q* Q2) {
     return result;
 }
 
+//Костромицкая Вероника
 Q* DIV_QQ_Q(Q* Q1, Q* Q2) {
     if (Q1 == NULL || Q2 == NULL ||
         Q1->numerator == NULL || Q1->denominator == NULL ||

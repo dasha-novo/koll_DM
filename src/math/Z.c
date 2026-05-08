@@ -4,6 +4,7 @@
 #include "Z.h"
 #include "N.h"
 
+//Новожилова Дарья
 char* ABS_Z_N(char* x){
     int len = strlen(x);
     char* result = (char*)malloc((len + 1) * sizeof(char));
@@ -23,12 +24,14 @@ char* ABS_Z_N(char* x){
     return result;
 }
 
+//Новожилова Дарья
 int POZ_Z_D(char* x){
     if(strlen(x) == 1 && x[0] == '0'){ return 0; }
     if (x[0] == '-') { return -1; }
     return 1;
 }
 
+//Богачева Вероника
 char* MUL_ZM_Z(const char* num) {
    int len = strlen(num);
 
@@ -60,7 +63,7 @@ char* MUL_ZM_Z(const char* num) {
    return result;
 }
 
-
+//Богачева Вероника
 char* TRANS_Z_N(const char* num) {
    if (num[0] == '-') {
        return NULL;
@@ -91,6 +94,7 @@ char* TRANS_Z_N(const char* num) {
    return result;
 }
 
+//Итыгилов Архип
 char* ADD_ZZ_Z(char* a, char* b){
     if(POZ_Z_D(b) == 0){
             char* copy = malloc(strlen(a) + 1);
@@ -149,6 +153,7 @@ char* ADD_ZZ_Z(char* a, char* b){
     }
 }
 
+//Итыгилов Архип
 char* SUB_ZZ_Z(char* a, char* b){
     if(POZ_Z_D(b) == 0){
             char* copy = malloc(strlen(a) + 1);
@@ -205,6 +210,7 @@ char* SUB_ZZ_Z(char* a, char* b){
     }
 }
 
+//Колесникова Дарья
 char* MUL_ZZ_Z(const char* a, const char* b) {
    char* abs_a = ABS_Z_N((char*)a);
    if (!abs_a) return NULL;
@@ -246,6 +252,7 @@ char* MUL_ZZ_Z(const char* a, const char* b) {
    return result;
 }
 
+//Колесникова Дарья
 char* DIV_ZZ_Z(char* x, char* y) {
    if (y == NULL || strlen(y) == 0 || (strlen(y) == 1 && y[0] == '0')) {
        printf("Error: Division by zero!\n");
@@ -305,6 +312,7 @@ char* DIV_ZZ_Z(char* x, char* y) {
    return result;
 }
 
+//Колесникова Дарья
 char* MOD_ZZ_Z(char* x, char* y) {
    if (y == NULL || strlen(y) == 0 || (strlen(y) == 1 && y[0] == '0')) {
        printf("Error: Division by zero!\n");
