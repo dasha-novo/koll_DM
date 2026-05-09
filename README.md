@@ -11,10 +11,11 @@
 
 ## Сборка и запуск
 
+1. Клонируйте репозиторий:
 git clone https://github.com/dasha-novo/koll_DM.git
-cd koll_DM
-make
-./cas_system
+2. Перейдите в папку проекта: cd koll_DM
+3. Соберите программу: make
+4. Запустите: ./cas_system
 
 ## Очистка
 
