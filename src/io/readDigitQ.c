@@ -47,7 +47,7 @@ Q* read_digQ() {
     strcpy(denominator, den_str);
 
 
-    for (size_t i = 0; i < strlen(numerator); i++) { //заменили int на size_t
+    for (size_t i = 0; i < strlen(numerator); i++) {
         if (!isdigit(numerator[i]) && !(i == 0 && numerator[i] == '-')) {
             printf("Ошибка: присутствует недопустимый символ!\n");
             free(numerator);
@@ -56,7 +56,7 @@ Q* read_digQ() {
         }
     }
    
-    for (size_t i = 0; i < strlen(denominator); i++) { //заменили int на size_t
+    for (size_t i = 0; i < strlen(denominator); i++) { 
         if (!isdigit(denominator[i])) {
             printf("Ошибка: присутствует недопустимый символ!\n");
             free(numerator);

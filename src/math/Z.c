@@ -7,7 +7,7 @@
 //Новожилова Дарья
 char* ABS_Z_N(char* x){
     int len = strlen(x);
-    char* result = (char*)malloc((len + 1) * sizeof(char));
+    char* result = (char*)malloc(10*((len + 1) * sizeof(char)));
     if (result == NULL) {
         printf("Ошибка выделения памяти!\n");
         return NULL;
@@ -46,7 +46,7 @@ char* MUL_ZM_Z(const char* num) {
    }
 
    if (num[0] == '-') {
-       char* result = (char*)malloc(len);
+       char* result = (char*)malloc(10*(len));
        if (!result) return NULL;
 
 
@@ -54,7 +54,7 @@ char* MUL_ZM_Z(const char* num) {
        return result;
    }
 
-   char* result = (char*)malloc(len + 2);
+   char* result = (char*)malloc(10*(len + 2));
    if (!result) return NULL;
 
    result[0] = '-';
@@ -84,7 +84,7 @@ char* TRANS_Z_N(const char* num) {
    int newLen = len - i;
 
 
-   char* result = (char*)malloc(newLen + 1);
+   char* result = (char*)malloc(10*(newLen + 1));
    if (!result) return NULL;
 
 
@@ -97,12 +97,12 @@ char* TRANS_Z_N(const char* num) {
 //Итыгилов Архип
 char* ADD_ZZ_Z(char* a, char* b){
     if(POZ_Z_D(b) == 0){
-            char* copy = malloc(strlen(a) + 1);
+            char* copy = malloc(10*(strlen(a) + 1));
             strcpy(copy, a);
             return copy;
         }
     if(POZ_Z_D(a) == 0){
-        char* copy = malloc(strlen(b) + 1);
+        char* copy = malloc(10*(strlen(b) + 1));
         strcpy(copy, b);
         return copy;
     }
@@ -156,7 +156,7 @@ char* ADD_ZZ_Z(char* a, char* b){
 //Итыгилов Архип
 char* SUB_ZZ_Z(char* a, char* b){
     if(POZ_Z_D(b) == 0){
-            char* copy = malloc(strlen(a) + 1);
+            char* copy = malloc(10*(strlen(a) + 1));
             strcpy(copy, a);
             return copy;
         }
@@ -287,7 +287,6 @@ char* DIV_ZZ_Z(char* x, char* y) {
         return NULL;
     }
 
-    // Деление модулей
     char* quotient = DIV_NN_N(abs_x, abs_y);
 
     if (quotient == NULL) {
@@ -296,7 +295,6 @@ char* DIV_ZZ_Z(char* x, char* y) {
         return NULL;
     }
 
-    // Остаток от деления модулей
     char* remainder = MOD_NN_N(abs_x, abs_y);
 
     if (remainder == NULL) {
@@ -306,12 +304,9 @@ char* DIV_ZZ_Z(char* x, char* y) {
         return NULL;
     }
 
-    // Проверяем: есть ли ненулевой остаток
     int has_remainder =
         !(strlen(remainder) == 1 && remainder[0] == '0');
 
-    // Если знаки разные и остаток не ноль,
-    // увеличиваем модуль частного на 1
     if (result_sign == -1 && has_remainder) {
 
         char* temp = ADD_ZZ_Z(quotient, "1");
@@ -331,11 +326,10 @@ char* DIV_ZZ_Z(char* x, char* y) {
 
     char* result;
 
-    // Навешиваем знак
     if (result_sign == -1 &&
         !(strlen(quotient) == 1 && quotient[0] == '0')) {
 
-        result = malloc(strlen(quotient) + 2);
+        result = malloc(10*(strlen(quotient) + 2));
 
         if (result == NULL) {
             free(abs_x);
@@ -349,7 +343,7 @@ char* DIV_ZZ_Z(char* x, char* y) {
 
     } else {
 
-        result = malloc(strlen(quotient) + 1);
+        result = malloc(10*(strlen(quotient) + 1));
 
         if (result == NULL) {
             free(abs_x);

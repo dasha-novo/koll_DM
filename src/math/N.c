@@ -41,7 +41,7 @@ char* NZER_N_B(char* x) {
 
 //Новожилова Дарья
 char* ADD_1N_N(const char* x) {
-    char* copy = malloc(strlen(x) + 1);
+    char* copy = malloc(10*(strlen(x) + 1));
     strcpy(copy, x);
     
     for (int i = strlen(copy) - 1; i >= 0; i--) {
@@ -53,7 +53,7 @@ char* ADD_1N_N(const char* x) {
     }
     
     int len = strlen(x);
-    char* result = malloc(len + 2);
+    char* result = malloc(10*(len + 2));
     result[0] = '1';
     for (int i = 0; i < len; i++) {
         result[i + 1] = '0';
@@ -71,7 +71,7 @@ char* ADD_NN_N(const char* a, const char* b) {
    int maxLen = (lenA > lenB ? lenA : lenB);
 
 
-   char* result = (char*)malloc((maxLen + 2) * sizeof(char));
+   char* result = (char*)malloc(10*(maxLen + 2) * sizeof(char));
    if (result == NULL) {
        return NULL;
    }
@@ -130,7 +130,7 @@ char* MUL_ND_N(const char* num, char digit_char) {
    }
 
 
-   char* result = (char*)malloc(len + 2);
+   char* result = (char*)malloc(100*(len + 2));
    if (!result) return NULL;
 
 
@@ -181,11 +181,21 @@ char* SUB_NN_N(char *a, char *b){
     if(COM_NN_D(a,b) == 2){
         int as = strlen(a);
         int bs = strlen(b);
-        char* res = malloc(as+1);
+        char* res = malloc(10*(as+1));
+        if (!res){
+            printf("ошибка выделения памяти\n");
+            free(res);
+            return NULL;
+        }
         int c=0;
 
 
-        char* at = malloc(as+1);
+        char* at = malloc(10*(as+1));
+        if (!at){
+            printf("ошибка выделения памяти\n");
+            free(at);
+            return NULL;
+        }
         strcpy(at, a);
        
         for(int i = as - 1, j = bs - 1; i>=0; i--, j--){
@@ -215,7 +225,12 @@ char* SUB_NN_N(char *a, char *b){
             start++;
         }
 
-        char* final = malloc(strlen(start) + 1);
+        char* final = malloc(10*(strlen(start) + 1));
+        if (!final){
+            printf("ошибка выделения памяти\n");
+            free(final);
+            return NULL;
+        }
         strcpy(final, start);
         free(at);
         free(res);
@@ -228,7 +243,7 @@ char* SUB_NN_N(char *a, char *b){
 char* MUL_Nk_N(char* a, char* k){
     int as = strlen(a);
     int kn = atoi(k);
-    char* res = malloc(as + kn + 1);
+    char* res = malloc(10*(as + kn + 1));
     strcpy(res, a);
    
     for(int i=as; i<as+kn; i++){
@@ -326,7 +341,7 @@ char* DIV_NN_Dk(char* N, int D, int* k) {
     size_t len = 0;
     while (N[len] != '\0') len++;
 
-    char* result = (char*)malloc(len + 1);
+    char* result = (char*)malloc(10*(len + 1));
     if (result == NULL) {
         return NULL;
     }
@@ -367,8 +382,12 @@ char* DIV_NN_N(char* A, char* B) {
         size_t len = 0;
         while (A[len] != '\0') len++;
 
-        char* res = malloc(len + 1);
-        if (!res) return NULL;
+        char* res = malloc(10*(len + 1));
+        if (!res) {
+            printf("ошибка выделения памяти\n");
+            free(res);
+            return NULL;
+        }
 
         for (size_t i = 0; i <= len; i++)
             res[i] = A[i];
@@ -379,7 +398,11 @@ char* DIV_NN_N(char* A, char* B) {
     // A < B
     if (COM_NN_D(A, B) == 1) {
         char* zero = malloc(2);
-        if (!zero) return NULL;
+        if (!zero) {
+            printf("ошибка выделения памяти\n");
+            free(zero);
+            return NULL;
+        }
 
         zero[0] = '0';
         zero[1] = '\0';
@@ -390,7 +413,11 @@ char* DIV_NN_N(char* A, char* B) {
     // A == B
     if (COM_NN_D(A, B) == 0) {
         char* one = malloc(2);
-        if (!one) return NULL;
+        if (!one){
+            printf("ошибка выделения памяти\n");
+            free(one);
+            return NULL;
+        } 
 
         one[0] = '1';
         one[1] = '\0';
@@ -401,14 +428,19 @@ char* DIV_NN_N(char* A, char* B) {
     size_t lenA = 0;
     while (A[lenA] != '\0') lenA++;
 
-    char* rem = malloc(lenA + 2);
-    if (!rem) return NULL;
+    char* rem = malloc(10*(lenA + 2));
+    if (!rem) {
+        printf("ошибка выделения памяти\n");
+        free(rem);
+        return NULL;
+    }
 
     rem[0] = '\0';
 
-    char* quot = malloc(lenA + 1);
+    char* quot = malloc(10*(lenA + 1));
     if (!quot) {
-        free(rem);
+        printf("ошибка выделения памяти\n");
+        free(quot);
         return NULL;
     }
 
@@ -422,7 +454,6 @@ char* DIV_NN_N(char* A, char* B) {
         rem[remLen] = A[i];
         rem[remLen + 1] = '\0';
 
-        // удаление ведущих нулей
         size_t shift = 0;
         while (rem[shift] == '0' && rem[shift + 1] != '\0')
             shift++;
@@ -454,7 +485,6 @@ char* DIV_NN_N(char* A, char* B) {
                 return NULL;
             }
 
-            // rem >= prod
             if (COM_NN_D(rem, prod) != 1) {
                 free(prod);
                 break;
@@ -481,7 +511,7 @@ char* DIV_NN_N(char* A, char* B) {
     if (q == 0) {
         size_t rlen = strlen(rem);
 
-        newRem = malloc(rlen + 1);
+        newRem = malloc(10*(rlen + 1));
         if (!newRem) {
             free(prod);
             free(rem);
@@ -514,7 +544,7 @@ char* DIV_NN_N(char* A, char* B) {
 
     size_t finalLen = qpos - qShift;
 
-    char* finalQuot = malloc(finalLen + 1);
+    char* finalQuot = malloc(10*(finalLen + 1));
     if (!finalQuot) {
         free(rem);
         free(quot);
@@ -543,14 +573,25 @@ char* MOD_NN_N(char* a, char* b){
     }
     
     char* q = DIV_NN_N(a, b);
-    if (!q) return NULL;
+    if (!q){
+        printf("Error div\n");
+       return NULL; 
+    } 
     
     char* bq = MUL_NN_N(b, q);
     if (!bq){
+        printf("error mul\n");
         free(q);
         return NULL;
     }
     char* r = SUB_NN_N(a, bq);
+    if (r == NULL){
+        printf("err sub\n");
+        free(q);
+        free(bq);
+        return NULL;
+    }
+
     free(q);
     free(bq);
     
@@ -561,7 +602,7 @@ char* MOD_NN_N(char* a, char* b){
 char* GCF_NN_N(char* a, char* b){
     if(!a || !b) return NULL;
     
-   if ((a[0] == '1' && a[1] == '\0') || (b[0] == '1' && b[1] == '\0')) { //случай для единицы
+   if ((a[0] == '1' && a[1] == '\0') || (b[0] == '1' && b[1] == '\0')) { 
         char* res = malloc(2);
         if (!res) return NULL;
         res[0] = '1';
@@ -571,7 +612,7 @@ char* GCF_NN_N(char* a, char* b){
 
     int cmp = COM_NN_D(a, b);
     if (cmp == 0){
-        char* res = malloc(strlen(a)+1);
+        char* res = malloc(10*(strlen(a)+1));
         if (!res) return NULL;
         strcpy(res, a);
         return res;
@@ -580,8 +621,8 @@ char* GCF_NN_N(char* a, char* b){
     char *x = NULL, *y = NULL;
     
     if(cmp == 2){
-        x = malloc(strlen(a) + 1);
-        y = malloc(strlen(b) + 1);
+        x = malloc(10*(strlen(a) + 1));
+        y = malloc(10*(strlen(b) + 1));
         if (x && y) { 
             strcpy(x, a); 
             strcpy(y, b); 
@@ -590,8 +631,8 @@ char* GCF_NN_N(char* a, char* b){
     } 
     
     else {
-        x = malloc(strlen(b) + 1);
-        y = malloc(strlen(a) + 1);
+        x = malloc(10*(strlen(a) + 1));
+        y = malloc(10*(strlen(b) + 1));
         if (x && y) { 
             strcpy(x, b); 
             strcpy(y, a); 
@@ -601,12 +642,14 @@ char* GCF_NN_N(char* a, char* b){
     if (!x || !y) {
         free(x);  
         free(y);
+        printf("err\n");
         return NULL;
     }
     
     while (strcmp(NZER_N_B(y), "да") == 0){
         char* r = MOD_NN_N(x, y);
         if (!r){
+            printf("errorrrrrrrrr\n");
             free(x); 
             free(y); 
             return NULL;

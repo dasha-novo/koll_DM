@@ -140,7 +140,7 @@ void handle_natural_operations(Context* ctx) {
                 
             case 5:
                 if (COM_NN_D(ctx->natural1, ctx->natural2) == 1) {
-                    printf("❌ Первое число должно быть >= второго!\n");
+                    printf("Первое число должно быть >= второго!\n");
                     break;
                 }
                 result_str = SUB_NN_N(ctx->natural1, ctx->natural2);
@@ -155,7 +155,7 @@ void handle_natural_operations(Context* ctx) {
                 while (getchar() != '\n');
                 
                 if (digit < '0' || digit > '9') {
-                    printf("❌ Это не цифра!\n");
+                    printf("Это не цифра!\n");
                     break;
                 }
                 result_str = MUL_ND_N(ctx->natural1, digit);

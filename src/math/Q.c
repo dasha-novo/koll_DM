@@ -21,7 +21,7 @@ Q* TRANS_Z_Q(const char* num) {
         return NULL;
     }
 
-    Q* q = malloc(sizeof(Q));
+    Q* q = malloc(10*(sizeof(Q)));
     if (!q) {
         return NULL;
     }
@@ -56,7 +56,7 @@ char* TRANS_Q_Z(const Q* q) {
     }
 
     int len = strlen(q->numerator);
-    char* result = (char*)malloc(len + 1);
+    char* result = (char*)malloc(10*(len + 1));
     if (!result) {
         return NULL;
     }
@@ -68,7 +68,7 @@ char* TRANS_Q_Z(const Q* q) {
 
 //Итыгилов Архип
 Q* RED_Q_Q(Q* frac){
-    Q* newfrac = malloc(sizeof(Q));
+    Q* newfrac = malloc(10*(sizeof(Q)));
     if (!newfrac) return NULL;
 
 
@@ -86,7 +86,7 @@ Q* RED_Q_Q(Q* frac){
 
 //Итыгилов Архип
 Q* ADD_QQ_Q(Q* frac1, Q* frac2){
-    Q* newfrac = malloc(sizeof(Q));
+    Q* newfrac = malloc(10*(sizeof(Q)));
 
 
     char* nok = LCM_NN_N(frac1->denominator, frac2->denominator);
@@ -169,7 +169,7 @@ Q* SUB_QQ_Q(Q* a, Q* b) {
   
 
 
-   Q* result = (Q*)malloc(sizeof(Q));
+   Q* result = (Q*)malloc(10*(sizeof(Q)));
    if (!result) {
        free(lcm);
        free(mult1);
@@ -223,7 +223,7 @@ Q* MUL_QQ_Q(Q* Q1, Q* Q2) {
         len_den++;
     }
 
-    Q* result = (Q*)malloc(sizeof(Q));
+    Q* result = (Q*)malloc(10*((sizeof(Q))));
     if (result == NULL) {
         free(res_num);
         free(res_den);
@@ -271,7 +271,7 @@ Q* DIV_QQ_Q(Q* Q1, Q* Q2) {
         len_den++;
     }
 
-    Q* result = (Q*)malloc(sizeof(Q));
+    Q* result = (Q*)malloc(10*(sizeof(Q)));
     if (result == NULL) {
         free(res_num);
         free(res_den);

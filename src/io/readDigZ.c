@@ -48,7 +48,7 @@ char* read_digZ() {
         }
     }
 
-    if (len == 2 && result[0] == '-' && result[1] == '0'){ //дробавлена проверка на -0
+    if (len == 2 && result[0] == '-' && result[1] == '0'){
         result[0] = '0';
         result[1] = '\0';
         len--;

@@ -190,17 +190,29 @@ Polynomial* ADD_PP_P(Polynomial *poly1, Polynomial *poly2) {
 //Костромицкая Вероника
 static void negate_coeff(Q* q) {
     if (!q || !q->numerator || q->numerator[0] == '\0') return;
-    if (q->numerator[0] == '-' && q->numerator[1] == '-') {
-        size_t len = strlen(q->numerator);
-        memmove(q->numerator, q->numerator + 1, len);
-        q->nn = len - 1;
+    
+    size_t len = strlen(q->numerator);
+    char* new_num = malloc(len + 2);
+    if (!new_num) return;
+    
+    if (q->numerator[0] == '-') {
+        strcpy(new_num, q->numerator + 1);
+        if (new_num[0] == '\0' || new_num[0] == '-') {
+            if (new_num[0] == '-') {
+                memmove(new_num, new_num + 1, strlen(new_num));
+            }
+            if (new_num[0] == '\0') {
+                strcpy(new_num, "0");
+            }
+        }
     } else {
-        size_t len = strlen(q->numerator);
-        q->numerator = realloc(q->numerator, len + 2);
-        memmove(q->numerator + 1, q->numerator, len + 1);
-        q->numerator[0] = '-';
-        q->nn = len + 1;
+        new_num[0] = '-';
+        strcpy(new_num + 1, q->numerator);
     }
+    
+    free(q->numerator);
+    q->numerator = new_num;
+    q->nn = strlen(q->numerator);
 }
 
 //Костромицкая Вероника
@@ -211,9 +223,12 @@ Polynomial* SUB_PP_P(Polynomial* P1, Polynomial* P2) {
     if (!res) return NULL;
 
     int max_terms = P1->count + P2->count;
-    if (max_terms > P1->count) {
+    if (max_terms > res->count) {
         Term* tmp = realloc(res->terms, max_terms * sizeof(Term));
-        if (!tmp) { free_poly(res); return NULL; }
+        if (!tmp) { 
+            free_poly(res); 
+            return NULL; 
+        }
         res->terms = tmp;
     }
 
@@ -224,45 +239,113 @@ Polynomial* SUB_PP_P(Polynomial* P1, Polynomial* P2) {
             int cmp = COM_NN_D(P1->terms[i].exp, P2->terms[j].exp);
 
             if (cmp == 2) {
-                res->terms[k] = P1->terms[i];
+                if (k != i) {
+                    res->terms[k] = res->terms[i];
+                }
                 i++; k++;
-            } else if (cmp == 1) { 
-                res->terms[k] = P2->terms[j];
-                negate_coeff(res->terms[k].coeff);
+            } 
+            else if (cmp == 1) {
+                Q* new_coeff = malloc(sizeof(Q));
+                if (!new_coeff) { free_poly(res); return NULL; }
+                
+                new_coeff->numerator = strdup(P2->terms[j].coeff->numerator);
+                new_coeff->denominator = strdup(P2->terms[j].coeff->denominator);
+                new_coeff->nn = P2->terms[j].coeff->nn;
+                new_coeff->dm = P2->terms[j].coeff->dm;
+                
+                if (!new_coeff->numerator || !new_coeff->denominator) {
+                    free_Q(new_coeff);
+                    free_poly(res);
+                    return NULL;
+                }
+                
+                negate_coeff(new_coeff);
+                
+                res->terms[k].coeff = new_coeff;
+                res->terms[k].exp = strdup(P2->terms[j].exp);
+                if (!res->terms[k].exp) {
+                    free_Q(new_coeff);
+                    free_poly(res);
+                    return NULL;
+                }
+                
                 j++; k++;
-            } else {
-                Q* new_coeff = SUB_QQ_Q(P1->terms[i].coeff, P2->terms[j].coeff);
+            } 
+            else {
+                Q* new_coeff = SUB_QQ_Q(res->terms[i].coeff, P2->terms[j].coeff);
                 if (!new_coeff) { free_poly(res); return NULL; }
 
                 if (!(new_coeff->numerator[0] == '0' && new_coeff->numerator[1] == '\0')) {
+                    free_Q(res->terms[i].coeff);
+                    
                     res->terms[k].coeff = new_coeff;
-                    res->terms[k].exp = malloc(strlen(P1->terms[i].exp) + 1);
-                    if (res->terms[k].exp) strcpy(res->terms[k].exp, P1->terms[i].exp);
+                    res->terms[k].exp = strdup(P1->terms[i].exp);
+                    if (!res->terms[k].exp) {
+                        free_Q(new_coeff);
+                        free_poly(res);
+                        return NULL;
+                    }
                     k++;
                 } else {
                     free_Q(new_coeff);
+                    free_Q(res->terms[i].coeff);
+                    free(res->terms[i].exp);
                 }
                 i++; j++;
             }
-        } else if (i < P1->count) {
-            res->terms[k] = P1->terms[i];
+        } 
+        else if (i < P1->count) {
+            if (k != i) {
+                res->terms[k] = res->terms[i];
+            }
             i++; k++;
-        } else {
-            res->terms[k] = P2->terms[j];
-            negate_coeff(res->terms[k].coeff);
+        } 
+        else {
+            Q* new_coeff = malloc(sizeof(Q));
+            if (!new_coeff) { free_poly(res); return NULL; }
+            
+            new_coeff->numerator = strdup(P2->terms[j].coeff->numerator);
+            new_coeff->denominator = strdup(P2->terms[j].coeff->denominator);
+            new_coeff->nn = P2->terms[j].coeff->nn;
+            new_coeff->dm = P2->terms[j].coeff->dm;
+            
+            if (!new_coeff->numerator || !new_coeff->denominator) {
+                free_Q(new_coeff);
+                free_poly(res);
+                return NULL;
+            }
+            
+            negate_coeff(new_coeff);
+            
+            res->terms[k].coeff = new_coeff;
+            res->terms[k].exp = strdup(P2->terms[j].exp);
+            if (!res->terms[k].exp) {
+                free_Q(new_coeff);
+                free_poly(res);
+                return NULL;
+            }
+            
             j++; k++;
         }
+    }
+
+    for (int idx = k; idx < res->count; idx++) {
+        free_Q(res->terms[idx].coeff);
+        free(res->terms[idx].exp);
     }
 
     if (k == 0) {
         free(res->terms);
         res->terms = NULL;
+        res->count = 0;
     } else {
         Term* tmp = realloc(res->terms, k * sizeof(Term));
-        if (tmp) res->terms = tmp;
+        if (tmp) {
+            res->terms = tmp;
+        }
+        res->count = k;
     }
 
-    res->count = k;
     return res;
 }
 

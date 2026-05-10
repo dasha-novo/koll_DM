@@ -79,7 +79,7 @@ Q* read_coeff(char *str) {
         }
     }
 
-    if (num_str[0] == '-' && strlen(num_str) == 1){ //провека на пустой числитель
+    if (num_str[0] == '-' && strlen(num_str) == 1){ 
         printf("Неправильный ввод!\n");
             free(buf);
             return NULL;

@@ -25,13 +25,6 @@ char* read_digN() {
         return NULL;
     }
 
-
-    if(len == 1 && buff[0] == '0'){
-        printf("Не натуральное число!");
-        return NULL;
-    }
-
-
     char* result = (char*)malloc((len + 1) * sizeof(char));
     if (result == NULL) {
         printf("Ошибка выделения памяти!\n");
@@ -49,7 +42,7 @@ char* read_digN() {
     }
 
 
-    if(result[0] == '0' || result[1] == '0'){ //заменили и на или
+    if((result[0] == '0' && len != 1)){
         printf("Введите число без ведущих нулей!\n");
         return NULL;
     }
