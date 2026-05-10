@@ -123,75 +123,35 @@ Q* ADD_QQ_Q(Q* frac1, Q* frac2){
 //Колесникова Дарья
 Q* SUB_QQ_Q(Q* a, Q* b) {
    if (!a || !b) return NULL;
-  
-   char* lcm = LCM_NN_N(a->denominator, b->denominator);
-   if (!lcm) return NULL;
-  
-   char* mult1 = DIV_NN_N(lcm, a->denominator);
-   if (!mult1) {
-       free(lcm);
-       return NULL;
-   }
-  
-   char* mult2 = DIV_NN_N(lcm, b->denominator);
-   if (!mult2) {
-       free(lcm);
-       free(mult1);
-       return NULL;
-   }
-  
-   char* num1_new = MUL_ZZ_Z(a->numerator, mult1);
-   if (!num1_new) {
-       free(lcm);
-       free(mult1);
-       free(mult2);
-       return NULL;
-   }
-  
-   char* num2_new = MUL_ZZ_Z(b->numerator, mult2);
-   if (!num2_new) {
-       free(lcm);
-       free(mult1);
-       free(mult2);
-       free(num1_new);
-       return NULL;
-   }
-  
-   char* result_num = SUB_ZZ_Z(num1_new, num2_new);
-   if (!result_num) {
-       free(lcm);
-       free(mult1);
-       free(mult2);
-       free(num1_new);
-       free(num2_new);
-       return NULL;
-   }
-  
 
+   // Faster and avoids expensive LCM/GCD reductions:
+   // a/b - c/d = (a*d - c*b) / (b*d)
+   char* ad = MUL_ZZ_Z(a->numerator, b->denominator);
+   if (!ad) return NULL;
+
+   char* cb = MUL_ZZ_Z(b->numerator, a->denominator);
+   if (!cb) { free(ad); return NULL; }
+
+   char* result_num = SUB_ZZ_Z(ad, cb);
+   free(ad);
+   free(cb);
+   if (!result_num) return NULL;
+
+   char* result_den = MUL_NN_N(a->denominator, b->denominator);
+   if (!result_den) { free(result_num); return NULL; }
 
    Q* result = (Q*)malloc(10*(sizeof(Q)));
    if (!result) {
-       free(lcm);
-       free(mult1);
-       free(mult2);
-       free(num1_new);
-       free(num2_new);
        free(result_num);
+       free(result_den);
        return NULL;
    }
-  
+
    result->numerator = result_num;
-   result->denominator = lcm;
+   result->denominator = result_den;
    result->nn = strlen(result_num);
-   result->dm = strlen(lcm);
-  
-   result = RED_Q_Q(result);
-  
-   free(mult1);
-   free(mult2);
-   free(num1_new);
-   free(num2_new);
-  
+   result->dm = strlen(result_den);
+
    return result;
 }
 

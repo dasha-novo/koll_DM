@@ -506,36 +506,19 @@ char* DIV_NN_N(char* A, char* B) {
             return NULL;
         }
 
-    char* newRem;
-
-    if (q == 0) {
-        size_t rlen = strlen(rem);
-
-        newRem = malloc(10*(rlen + 1));
-        if (!newRem) {
-            free(prod);
-            free(rem);
-            free(quot);
-            return NULL;
+        if (q != 0) {
+            char* newRem = SUB_NN_N(rem, prod);
+            if (!newRem) {
+                free(prod);
+                free(rem);
+                free(quot);
+                return NULL;
+            }
+            strcpy(rem, newRem);
+            free(newRem);
         }
 
-        strcpy(newRem, rem);
-    }
-    else {
-        newRem = SUB_NN_N(rem, prod);
-
-        if (!newRem) {
-            free(prod);
-            free(rem);
-            free(quot);
-            return NULL;
-        }
-    }
-
-    free(prod);
-    free(rem);
-
-    rem = newRem;
+        free(prod);
     }
 
     size_t qShift = 0;
@@ -618,26 +601,14 @@ char* GCF_NN_N(char* a, char* b){
         return res;
     }
 
-    char *x = NULL, *y = NULL;
-    
-    if(cmp == 2){
-        x = malloc(10*(strlen(a) + 1));
-        y = malloc(10*(strlen(b) + 1));
-        if (x && y) { 
-            strcpy(x, a); 
-            strcpy(y, b); 
-            
-        }
-    } 
-    
-    else {
-        x = malloc(10*(strlen(a) + 1));
-        y = malloc(10*(strlen(b) + 1));
-        if (x && y) { 
-            strcpy(x, b); 
-            strcpy(y, a); 
-            
-        }
+    const char* xsrc = (cmp == 2) ? a : b;
+    const char* ysrc = (cmp == 2) ? b : a;
+
+    char *x = malloc(10*(strlen(xsrc) + 1));
+    char *y = malloc(10*(strlen(ysrc) + 1));
+    if (x && y) {
+        strcpy(x, xsrc);
+        strcpy(y, ysrc);
     }
     if (!x || !y) {
         free(x);  

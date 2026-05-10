@@ -215,138 +215,131 @@ static void negate_coeff(Q* q) {
     q->nn = strlen(q->numerator);
 }
 
+static int is_zero_q(const Q* q) {
+    if (!q || !q->numerator) return 1;
+    return (strcmp(q->numerator, "0") == 0 || strcmp(q->numerator, "-0") == 0);
+}
+
+static int is_zero_poly(const Polynomial* p) {
+    if (!p || p->count == 0 || !p->terms) return 1;
+    for (int i = 0; i < p->count; i++) {
+        if (!is_zero_q(p->terms[i].coeff)) return 0;
+    }
+    return 1;
+}
+
+static Q* dup_q(const Q* src) {
+    if (!src) return NULL;
+    Q* q = malloc(sizeof(Q));
+    if (!q) return NULL;
+    q->numerator = strdup(src->numerator ? src->numerator : "0");
+    q->denominator = strdup(src->denominator ? src->denominator : "1");
+    if (!q->numerator || !q->denominator) {
+        free(q->numerator);
+        free(q->denominator);
+        free(q);
+        return NULL;
+    }
+    q->nn = src->nn;
+    q->dm = src->dm;
+    return q;
+}
+
+static int lead_term_index(const Polynomial* p) {
+    if (!p || p->count == 0 || !p->terms) return -1;
+    int best = -1;
+    for (int i = 0; i < p->count; i++) {
+        if (is_zero_q(p->terms[i].coeff)) continue;
+        if (best == -1) { best = i; continue; }
+        if (cmp_natural_str(p->terms[i].exp, p->terms[best].exp) > 0) best = i;
+    }
+    return best;
+}
+
 //Костромицкая Вероника
 Polynomial* SUB_PP_P(Polynomial* P1, Polynomial* P2) {
     if (!P1 || !P2) return NULL;
 
-    Polynomial* res = copy_poly(P1);
-    if (!res) return NULL;
-
     int max_terms = P1->count + P2->count;
-    if (max_terms > res->count) {
-        Term* tmp = realloc(res->terms, max_terms * sizeof(Term));
-        if (!tmp) { 
-            free_poly(res); 
-            return NULL; 
-        }
-        res->terms = tmp;
-    }
+    Term* out = (max_terms > 0) ? malloc(max_terms * sizeof(Term)) : NULL;
+    if (max_terms > 0 && !out) return NULL;
 
     int i = 0, j = 0, k = 0;
-
-    while (i < P1->count || j < P2->count) {
-        if (i < P1->count && j < P2->count) {
-            int cmp = COM_NN_D(P1->terms[i].exp, P2->terms[j].exp);
-
-            if (cmp == 2) {
-                if (k != i) {
-                    res->terms[k] = res->terms[i];
-                }
-                i++; k++;
-            } 
-            else if (cmp == 1) {
-                Q* new_coeff = malloc(sizeof(Q));
-                if (!new_coeff) { free_poly(res); return NULL; }
-                
-                new_coeff->numerator = strdup(P2->terms[j].coeff->numerator);
-                new_coeff->denominator = strdup(P2->terms[j].coeff->denominator);
-                new_coeff->nn = P2->terms[j].coeff->nn;
-                new_coeff->dm = P2->terms[j].coeff->dm;
-                
-                if (!new_coeff->numerator || !new_coeff->denominator) {
-                    free_Q(new_coeff);
-                    free_poly(res);
-                    return NULL;
-                }
-                
-                negate_coeff(new_coeff);
-                
-                res->terms[k].coeff = new_coeff;
-                res->terms[k].exp = strdup(P2->terms[j].exp);
-                if (!res->terms[k].exp) {
-                    free_Q(new_coeff);
-                    free_poly(res);
-                    return NULL;
-                }
-                
-                j++; k++;
-            } 
-            else {
-                Q* new_coeff = SUB_QQ_Q(res->terms[i].coeff, P2->terms[j].coeff);
-                if (!new_coeff) { free_poly(res); return NULL; }
-
-                if (!(new_coeff->numerator[0] == '0' && new_coeff->numerator[1] == '\0')) {
-                    free_Q(res->terms[i].coeff);
-                    
-                    res->terms[k].coeff = new_coeff;
-                    res->terms[k].exp = strdup(P1->terms[i].exp);
-                    if (!res->terms[k].exp) {
-                        free_Q(new_coeff);
-                        free_poly(res);
-                        return NULL;
-                    }
-                    k++;
-                } else {
-                    free_Q(new_coeff);
-                    free_Q(res->terms[i].coeff);
-                    free(res->terms[i].exp);
-                }
-                i++; j++;
+    while (i < P1->count && j < P2->count) {
+        int cmp = COM_NN_D(P1->terms[i].exp, P2->terms[j].exp);
+        if (cmp == 2) { // exp1 > exp2
+            Q* c = dup_q(P1->terms[i].coeff);
+            char* e = strdup(P1->terms[i].exp);
+            if (!c || !e) { free_Q(c); free(e); goto fail; }
+            if (!is_zero_q(c)) { out[k].coeff = c; out[k].exp = e; k++; }
+            else { free_Q(c); free(e); }
+            i++;
+        } else if (cmp == 1) { // exp1 < exp2
+            Q* c = dup_q(P2->terms[j].coeff);
+            char* e = strdup(P2->terms[j].exp);
+            if (!c || !e) { free_Q(c); free(e); goto fail; }
+            negate_coeff(c);
+            if (!is_zero_q(c)) { out[k].coeff = c; out[k].exp = e; k++; }
+            else { free_Q(c); free(e); }
+            j++;
+        } else { // equal exp
+            Q* c = SUB_QQ_Q(P1->terms[i].coeff, P2->terms[j].coeff);
+            if (!c) goto fail;
+            if (!is_zero_q(c)) {
+                char* e = strdup(P1->terms[i].exp);
+                if (!e) { free_Q(c); goto fail; }
+                out[k].coeff = c;
+                out[k].exp = e;
+                k++;
+            } else {
+                free_Q(c);
             }
-        } 
-        else if (i < P1->count) {
-            if (k != i) {
-                res->terms[k] = res->terms[i];
-            }
-            i++; k++;
-        } 
-        else {
-            Q* new_coeff = malloc(sizeof(Q));
-            if (!new_coeff) { free_poly(res); return NULL; }
-            
-            new_coeff->numerator = strdup(P2->terms[j].coeff->numerator);
-            new_coeff->denominator = strdup(P2->terms[j].coeff->denominator);
-            new_coeff->nn = P2->terms[j].coeff->nn;
-            new_coeff->dm = P2->terms[j].coeff->dm;
-            
-            if (!new_coeff->numerator || !new_coeff->denominator) {
-                free_Q(new_coeff);
-                free_poly(res);
-                return NULL;
-            }
-            
-            negate_coeff(new_coeff);
-            
-            res->terms[k].coeff = new_coeff;
-            res->terms[k].exp = strdup(P2->terms[j].exp);
-            if (!res->terms[k].exp) {
-                free_Q(new_coeff);
-                free_poly(res);
-                return NULL;
-            }
-            
-            j++; k++;
+            i++; j++;
         }
     }
 
-    for (int idx = k; idx < res->count; idx++) {
-        free_Q(res->terms[idx].coeff);
-        free(res->terms[idx].exp);
+    while (i < P1->count) {
+        Q* c = dup_q(P1->terms[i].coeff);
+        char* e = strdup(P1->terms[i].exp);
+        if (!c || !e) { free_Q(c); free(e); goto fail; }
+        if (!is_zero_q(c)) { out[k].coeff = c; out[k].exp = e; k++; }
+        else { free_Q(c); free(e); }
+        i++;
     }
+
+    while (j < P2->count) {
+        Q* c = dup_q(P2->terms[j].coeff);
+        char* e = strdup(P2->terms[j].exp);
+        if (!c || !e) { free_Q(c); free(e); goto fail; }
+        negate_coeff(c);
+        if (!is_zero_q(c)) { out[k].coeff = c; out[k].exp = e; k++; }
+        else { free_Q(c); free(e); }
+        j++;
+    }
+
+    Polynomial* res = malloc(sizeof(Polynomial));
+    if (!res) goto fail;
 
     if (k == 0) {
-        free(res->terms);
+        free(out);
         res->terms = NULL;
         res->count = 0;
-    } else {
-        Term* tmp = realloc(res->terms, k * sizeof(Term));
-        if (tmp) {
-            res->terms = tmp;
-        }
-        res->count = k;
+        return res;
     }
 
+    Term* shrink = realloc(out, k * sizeof(Term));
+    if (shrink) out = shrink;
+    res->terms = out;
+    res->count = k;
     return res;
+
+fail:
+    for (int t = 0; t < k; t++) {
+        free_Q(out[t].coeff);
+        free(out[t].exp);
+    }
+    free(out);
+    return NULL;
 }
 
 //Осипова Евгения
@@ -675,7 +668,7 @@ Polynomial* MUL_PP_P(Polynomial* P1, Polynomial* P2) {
 Polynomial* DIV_PP_P(Polynomial* p1, Polynomial* p2){
     if (!p1 || !p2){ printf("Ошибка выделения памяти!\n"); return NULL; }
     
-    if (p2->count == 0){
+    if (is_zero_poly(p2)){
         printf("Ошибка: деление на нулевой многочлен!\n");
         return NULL;
     }
@@ -739,38 +732,43 @@ Polynomial* DIV_PP_P(Polynomial* p1, Polynomial* p2){
         return NULL;
     }
     
-    Polynomial* Q = malloc(sizeof(Polynomial));
-    if (!Q){ 
+    Polynomial* quot = malloc(sizeof(Polynomial));
+    if (!quot){
         free_poly(R); 
         printf("Ошибка выделения памяти!\n"); 
         return NULL; 
     }
-    Q->terms = NULL;
-    Q->count = 0;
+    quot->terms = NULL;
+    quot->count = 0;
     
-    struct Quotient *lead_R, *lead_p2, *step_coeff;
+    Q *lead_R, *lead_p2, *step_coeff;
     while (R->count > 0){
-        char* deg_R = DEG_P_N(R);
-        char* deg_p2 = DEG_P_N(p2);
-        if (!deg_R || !deg_p2 || cmp_natural_str(deg_R, deg_p2) < 0){
+        int idxR = lead_term_index(R);
+        int idxB = lead_term_index(p2);
+        if (idxR < 0 || idxB < 0) break;
+
+        char* deg_R = strdup(R->terms[idxR].exp);
+        char* deg_p2 = strdup(p2->terms[idxB].exp);
+        if (!deg_R || !deg_p2 || cmp_natural_str(deg_R, deg_p2) < 0) {
             free(deg_R); free(deg_p2);
             break;
         }
         
         char* diff = SUB_NN_N(deg_R, deg_p2);
         free(deg_R); free(deg_p2);
-        if (!diff){ free_poly(R); free_poly(Q); return NULL; }
+        if (!diff){ free_poly(R); free_poly(quot); return NULL; }
         
-        lead_R = R->terms[0].coeff;
-        lead_p2 = p2->terms[0].coeff;
+        lead_R = R->terms[idxR].coeff;
+        lead_p2 = p2->terms[idxB].coeff;
+        if (is_zero_q(lead_p2)) { free(diff); free_poly(R); free_poly(quot); return NULL; }
         step_coeff = DIV_QQ_Q(lead_R, lead_p2);
-        if (!step_coeff){ free(diff); free_poly(R); free_poly(Q); return NULL; }
+        if (!step_coeff){ free(diff); free_poly(R); free_poly(quot); return NULL; }
         
         Polynomial* p2_scaled = MUL_PQ_P(p2, step_coeff);
         if (!p2_scaled){ 
             free_Q(step_coeff); 
             free(diff); free_poly(R); 
-            free_poly(Q); return NULL;
+            free_poly(quot); return NULL;
         }
         
         Polynomial* p2_shifted = MUL_Pxk_P(p2_scaled, diff);
@@ -778,7 +776,7 @@ Polynomial* DIV_PP_P(Polynomial* p1, Polynomial* p2){
         if (!p2_shifted){ 
             free_Q(step_coeff); 
             free(diff); free_poly(R); 
-            free_poly(Q); return NULL; 
+            free_poly(quot); return NULL; 
         }
         
         Polynomial* R_new = SUB_PP_P(R, p2_shifted);
@@ -786,39 +784,39 @@ Polynomial* DIV_PP_P(Polynomial* p1, Polynomial* p2){
         if (!R_new){ 
             free_Q(step_coeff); 
             free(diff); free_poly(R); 
-            free_poly(Q); return NULL; 
+            free_poly(quot); return NULL; 
         }
         free_poly(R);
         R = R_new;
         
         Polynomial* term = malloc(sizeof(Polynomial));
-        if (!term){ free_Q(step_coeff); free(diff); free_poly(R); free_poly(Q); return NULL; }
+        if (!term){ free_Q(step_coeff); free(diff); free_poly(R); free_poly(quot); return NULL; }
         term->count = 1;
         term->terms = malloc(sizeof(Term));
         if (!term->terms){ 
             free(term); 
             free_Q(step_coeff); 
             free(diff); free_poly(R); 
-            free_poly(Q); 
+            free_poly(quot); 
             return NULL; 
         }
         
         term->terms[0].coeff = step_coeff;
         term->terms[0].exp = diff;
         
-        Polynomial* Q_new = ADD_PP_P(Q, term);
+        Polynomial* Q_new = ADD_PP_P(quot, term);
         free_poly(term); 
         if (!Q_new){ 
             free_poly(R); 
-            free_poly(Q); 
+            free_poly(quot); 
             return NULL; 
         }
-        free_poly(Q);
-        Q = Q_new;
+        free_poly(quot);
+        quot = Q_new;
     }
     
     free_poly(R);
-    return Q;
+    return quot;
 }
 
 //Осипова Евгения
