@@ -366,23 +366,35 @@ char* DIV_NN_N(char* A, char* B) {
     if (B[0] == '1' && B[1] == '\0') {
         size_t len = 0;
         while (A[len] != '\0') len++;
+
         char* res = malloc(len + 1);
         if (!res) return NULL;
-        for (size_t i = 0; i <= len; i++) res[i] = A[i];
+
+        for (size_t i = 0; i <= len; i++)
+            res[i] = A[i];
+
         return res;
     }
 
+    // A < B
     if (COM_NN_D(A, B) == 1) {
         char* zero = malloc(2);
         if (!zero) return NULL;
-        zero[0] = '0'; zero[1] = '\0';
+
+        zero[0] = '0';
+        zero[1] = '\0';
+
         return zero;
     }
 
+    // A == B
     if (COM_NN_D(A, B) == 0) {
         char* one = malloc(2);
         if (!one) return NULL;
-        one[0] = '1'; one[1] = '\0';
+
+        one[0] = '1';
+        one[1] = '\0';
+
         return one;
     }
 
@@ -391,78 +403,142 @@ char* DIV_NN_N(char* A, char* B) {
 
     char* rem = malloc(lenA + 2);
     if (!rem) return NULL;
+
     rem[0] = '\0';
 
     char* quot = malloc(lenA + 1);
-    if (!quot) { free(rem); return NULL; }
+    if (!quot) {
+        free(rem);
+        return NULL;
+    }
+
     size_t qpos = 0;
 
     for (size_t i = 0; i < lenA; i++) {
+
         size_t remLen = 0;
         while (rem[remLen] != '\0') remLen++;
+
         rem[remLen] = A[i];
         rem[remLen + 1] = '\0';
 
+        // удаление ведущих нулей
         size_t shift = 0;
-        while (rem[shift] == '0' && rem[shift + 1] != '\0') shift++;
+        while (rem[shift] == '0' && rem[shift + 1] != '\0')
+            shift++;
+
         if (shift > 0) {
-            size_t newLen = remLen - shift;
-            for (size_t k = 0; k < newLen; k++) rem[k] = rem[shift + k];
+            size_t newLen = remLen + 1 - shift;
+
+            for (size_t k = 0; k < newLen; k++)
+                rem[k] = rem[shift + k];
+
             rem[newLen] = '\0';
         }
 
         if (rem[0] == '0' && rem[1] == '\0') {
             quot[qpos++] = '0';
+            quot[qpos] = '\0';
             continue;
         }
 
         int q = 9;
+
         while (q > 0) {
             char qChar = (char)(q + '0');
-            char* prod = MUL_ND_N(B, qChar);
-            if (!prod) { free(rem); free(quot); return NULL; }
 
-            if (COM_NN_D(rem, prod) != 1) { 
+            char* prod = MUL_ND_N(B, qChar);
+            if (!prod) {
+                free(rem);
+                free(quot);
+                return NULL;
+            }
+
+            // rem >= prod
+            if (COM_NN_D(rem, prod) != 1) {
                 free(prod);
                 break;
             }
+
             free(prod);
             q--;
         }
 
         quot[qpos++] = (char)(q + '0');
+        quot[qpos] = '\0';
 
         char qChar = (char)(q + '0');
-        char* prod = MUL_ND_N(B, qChar);
-        if (!prod) { free(rem); free(quot); return NULL; }
-        char* newRem = SUB_NN_N(rem, prod);
-        free(prod);
-        free(rem);
-        if (!newRem) { free(quot); return NULL; }
-        rem = newRem;
 
-        quot[qpos] = '\0';
+        char* prod = MUL_ND_N(B, qChar);
+        if (!prod) {
+            free(rem);
+            free(quot);
+            return NULL;
+        }
+
+    char* newRem;
+
+    if (q == 0) {
+        size_t rlen = strlen(rem);
+
+        newRem = malloc(rlen + 1);
+        if (!newRem) {
+            free(prod);
+            free(rem);
+            free(quot);
+            return NULL;
+        }
+
+        strcpy(newRem, rem);
     }
+    else {
+        newRem = SUB_NN_N(rem, prod);
+
+        if (!newRem) {
+            free(prod);
+            free(rem);
+            free(quot);
+            return NULL;
+        }
+    }
+
+    free(prod);
+    free(rem);
+
+    rem = newRem;
+    }
+
     size_t qShift = 0;
-    while (quot[qShift] == '0' && quot[qShift + 1] != '\0') qShift++;
+    while (quot[qShift] == '0' && quot[qShift + 1] != '\0')
+        qShift++;
+
     size_t finalLen = qpos - qShift;
 
     char* finalQuot = malloc(finalLen + 1);
-    if (!finalQuot) { free(rem); free(quot); return NULL; }
-    for (size_t k = 0; k < finalLen; k++) finalQuot[k] = quot[qShift + k];
+    if (!finalQuot) {
+        free(rem);
+        free(quot);
+        return NULL;
+    }
+
+    for (size_t k = 0; k < finalLen; k++)
+        finalQuot[k] = quot[qShift + k];
+
     finalQuot[finalLen] = '\0';
 
     free(rem);
     free(quot);
+
     return finalQuot;
 }
+
 
 //Осипова Евгения
 char* MOD_NN_N(char* a, char* b){
     if (!a || !b) return NULL;
     
     if (strcmp(NZER_N_B(b), "нет") == 0){
-        printf("Error: деление на ноль запрещено");
+        printf("Ошибка: деление на ноль запрещено");
         return NULL;
     }
     
@@ -549,14 +625,19 @@ char* LCM_NN_N(char* a, char* b) {
     if (!a || !b) return NULL;
     
     char* gcf = GCF_NN_N(a, b);
-    if (!gcf) return NULL;
+    if (!gcf){
+        printf("error gfc!");
+        return NULL;
+    }
+
     
-    char* div = DIV_NN_N(a, gcf);
-    free(gcf);  
-    if (!div) return NULL;
-    
-    char* lcm = MUL_NN_N(div, b);
-    free(div);  
+    char* mul = MUL_NN_N(a, b);
+    if (!mul){
+        printf("error mul\n");
+        return NULL;
+    }
+
+    char* lcm = DIV_NN_N(mul, gcf);
     
     return lcm; 
 }

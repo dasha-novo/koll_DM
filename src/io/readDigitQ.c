@@ -8,7 +8,7 @@ Q* read_digQ() {
    
     char buff[10000*2];
     if (fgets(buff, sizeof(buff), stdin) == NULL) {
-        printf("Error!\n");
+        printf("Ошибка при считывании\n");
         return NULL;
     }
    
@@ -20,7 +20,7 @@ Q* read_digQ() {
    
     char* slash = strchr(buff, '/');
     if (slash == NULL) {
-        printf("Error! No '/'!\n");
+        printf("Ошибка: отсутствует знак '/'\n");
         return NULL;
     }
    
@@ -29,7 +29,7 @@ Q* read_digQ() {
     char* den_str = slash + 1;
    
     if (strlen(num_str) == 0 || strlen(den_str) == 0) {
-        printf("Error! Empty numerator or denominator!\n");
+        printf("Ошибка: пустой числитель или знаменатель\n");
         return NULL;
     }
    
@@ -39,7 +39,7 @@ Q* read_digQ() {
     if (!numerator || !denominator) {
         free(numerator);
         free(denominator);
-        printf("Memory error!\n");
+        printf("Ошибка выделения памяти!\n");
         return NULL;
     }
    
@@ -47,18 +47,18 @@ Q* read_digQ() {
     strcpy(denominator, den_str);
 
 
-    for (int i = 0; i < strlen(numerator); i++) {
+    for (size_t i = 0; i < strlen(numerator); i++) { //заменили int на size_t
         if (!isdigit(numerator[i]) && !(i == 0 && numerator[i] == '-')) {
-            printf("Error! Not a digit!\n");
+            printf("Ошибка: присутствует недопустимый символ!\n");
             free(numerator);
             free(denominator);
             return NULL;
         }
     }
    
-    for (int i = 0; i < strlen(denominator); i++) {
+    for (size_t i = 0; i < strlen(denominator); i++) { //заменили int на size_t
         if (!isdigit(denominator[i])) {
-            printf("Error! Not a digit!\n");
+            printf("Ошибка: присутствует недопустимый символ!\n");
             free(numerator);
             free(denominator);
             return NULL;
@@ -66,7 +66,7 @@ Q* read_digQ() {
     }
    
     if (strlen(denominator) == 1 && denominator[0] == '0') {
-        printf("Error! Denominator cannot be zero!\n");
+        printf("ошибка знаменатель не может быть равен нулю!\n");
         free(numerator);
         free(denominator);
         return NULL;

@@ -117,7 +117,7 @@ void handle_integer_operations(Context* ctx) {
             case 2: // POZ_Z_D
                 int_result = POZ_Z_D(ctx->integer1);
                 printf("Знак числа %s: ", ctx->integer1);
-                if (int_result == 2) printf("положительное\n");
+                if (int_result == 1) printf("положительное\n");
                 else if (int_result == 0) printf("ноль\n");
                 else printf("отрицательное\n");
                 printf("(код: %d)\n", int_result);
@@ -125,7 +125,7 @@ void handle_integer_operations(Context* ctx) {
                 
             case 3: // MUL_ZM_Z
                 result_str = MUL_ZM_Z(ctx->integer1);
-                printf("-%s = %s\n", ctx->integer1, result_str);
+                printf("-(%s) = %s\n", ctx->integer1, result_str);
                 break;
                 
             case 4: // TRANS_N_Z

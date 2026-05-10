@@ -7,14 +7,14 @@
 
 Q* read_coeff(char *str) {
     if (!str || *str == '\0') {
-        printf("Error! Empty coefficient.\n");
+        printf("Ошибка: пустой коэффициент!\n");
         return NULL;
     }
 
 
     char *buf = strdup(str);
     if (!buf) {
-        printf("Memory error!\n");
+        printf("Ошибка: присутствует недопустимый символ!\n");
         return NULL;
     }
 
@@ -31,7 +31,7 @@ Q* read_coeff(char *str) {
         num_str = buf;
         den_str = slash + 1;
         if (*num_str == '\0' || *den_str == '\0') {
-            printf("Error! Empty numerator or denominator.\n");
+            printf("Ошибка: числитель или знаменатель!\n");
             free(buf);
             return NULL;
         }
@@ -40,20 +40,20 @@ Q* read_coeff(char *str) {
 
     for (size_t i = 0; i < strlen(num_str); i++) {
         if (!isdigit(num_str[i]) && !(i == 0 && num_str[i] == '-')) {
-            printf("Error! Not a digit in numerator.\n");
+            printf("Ошибка: непустимый символ в числителе\n");
             free(buf);
             return NULL;
         }
     }
     if (num_str[0] == '-') {
         if (strlen(num_str) > 2 && num_str[1] == '0') {
-            printf("Enter a number without trailing zeros!\n");
+            printf("Введите число без ведущих нулей!\n");
             free(buf);
             return NULL;
         }
     } else {
         if (num_str[0] == '0' && strlen(num_str) > 1) {
-            printf("Enter a number without trailing zeros!\n");
+            printf("Введите число без ведущих нулей!\n");
             free(buf);
             return NULL;
         }
@@ -62,21 +62,27 @@ Q* read_coeff(char *str) {
 
     for (size_t i = 0; i < strlen(den_str); i++) {
         if (!isdigit((unsigned char)den_str[i])) {
-            printf("Error! Not a digit in denominator.\n");
+            printf("Ошибка: непустимый символ в знаменателе\n");
             free(buf);
             return NULL;
         }
     }
     if (den_str[0] == '0') {
         if (strlen(den_str) > 1) {
-            printf("Enter a number without trailing zeros!\n");
+            printf("Введите число без ведущих нулей!\n");
             free(buf);
             return NULL;
         } else {
-            printf("Error! Denominator cannot be zero!\n");
+            printf("Ошибка знаменатель не может быть равен нулю!\n");
             free(buf);
             return NULL;
         }
+    }
+
+    if (num_str[0] == '-' && strlen(num_str) == 1){ //провека на пустой числитель
+        printf("Неправильный ввод!\n");
+            free(buf);
+            return NULL;
     }
 
 
@@ -86,7 +92,7 @@ Q* read_coeff(char *str) {
         free(num_copy);
         free(den_copy);
         free(buf);
-        printf("Memory error!\n");
+        printf("Ошибка выделения памяти!\n");
         return NULL;
     }
     strcpy(num_copy, num_str);
@@ -98,7 +104,7 @@ Q* read_coeff(char *str) {
     if (!q) {
         free(num_copy);
         free(den_copy);
-        printf("Memory error!\n");
+        printf("Ошибка выделения памяти!\n");
         return NULL;
     }
     q->numerator = num_copy;
@@ -110,22 +116,22 @@ Q* read_coeff(char *str) {
 
 char* read_exp(const char *str) {
     if (!str || *str == '\0') {
-        printf("Error! Empty exponent.\n");
+        printf("Ошибка: пустая степень!\n");
         return NULL;
     }
     size_t len = strlen(str);
     for (size_t i = 0; i < len; i++) {
         if (!isdigit(str[i])) {
-            printf("Error!\n");
+            printf("Ошибка: присутсвтует непустимый символ\n");
             return NULL;
         }
     }
     if (str[0] == '0' && len > 1) {
-        printf("Enter an exponent without leading zeros.\n");
+        printf("Введите степень без ведущих нулей!\n");
         return NULL;
     }
     char *res = strdup(str);
-    if (!res) printf("Memory error!\n");
+    if (!res) printf("Ошибка выделения памяти!\n");
     return res;
 }
 
@@ -137,7 +143,7 @@ int term_cmp(const void *p1, const void *p2) {
 
 
 Polynomial* read_poly(void) {
-    printf("Enter terms <coeff exponent>. Empty line to finish.\n");
+    printf("Введите моном в формате <коэффициент степень>. Пустая строка завершает ввод.\n");
 
 
     Term *terms = NULL;
@@ -155,7 +161,7 @@ Polynomial* read_poly(void) {
 
         char *space = strchr(buf, ' ');
         if (!space) {
-            printf("Error! Use: coefficient exponent\n");
+            printf("Ошибка: неправильный ввод!\n");
             continue;
         }
         *space = '\0';
@@ -163,7 +169,7 @@ Polynomial* read_poly(void) {
         char *exp_str = space + 1;
         while (*exp_str == ' ') exp_str++;
         if (*exp_str == '\0') {
-            printf("Error!\n");
+            printf("Ошибка чтения степени!\n");
             continue;
         }
 
@@ -185,7 +191,7 @@ Polynomial* read_poly(void) {
             if (!tmp) {
                 free_Q(coeff);
                 free(exp);
-                printf("Memory error!\n");
+                printf("Ошибка выделения памяти!\n");
                 break;
             }
             terms = tmp;
@@ -197,7 +203,7 @@ Polynomial* read_poly(void) {
 
 
     if (cnt == 0) {
-        printf("No terms entered.\n");
+        printf("Нет введенных мономов!\n");
         free(terms);
         return NULL;
     }
@@ -213,7 +219,7 @@ Polynomial* read_poly(void) {
             free(terms[i].exp);
         }
         free(terms);
-        printf("Memory error!\n");
+        printf("Ошибка выделения памяти!\n");
         return NULL;
     }
     p->terms = terms;

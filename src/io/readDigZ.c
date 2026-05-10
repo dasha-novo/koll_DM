@@ -4,13 +4,13 @@
 #include <ctype.h>
 #include "readDigZ.h"
 
-#define MAX 10000
+#define MAX 100000
 
 char* read_digZ() {
     char buff[MAX];
    
     if (fgets(buff, sizeof(buff), stdin) == NULL) {
-        printf("Error!\n");
+        printf("Ошибка при считывании!\n");
         return NULL;
     }
 
@@ -23,14 +23,14 @@ char* read_digZ() {
 
 
     if (len == 0) {
-        printf("Error!\n");
+        printf("Ошибка: пустой ввод\n");
         return NULL;
     }
 
 
     char* result = (char*)malloc((len + 1) * sizeof(char));
     if (result == NULL) {
-        printf("Memory error!\n");
+        printf("Ошибка выделения памяти!\n");
         return NULL;
     }
 
@@ -42,15 +42,21 @@ char* read_digZ() {
         else if (isdigit(buff[i])) {
             result[i] = buff[i];
         } else {
-            printf("Error! Not a digit!\n");
+            printf("Ошибка: присутствует недопустимый символ!\n");
             free(result);
             return NULL;
         }
     }
 
+    if (len == 2 && result[0] == '-' && result[1] == '0'){ //дробавлена проверка на -0
+        result[0] = '0';
+        result[1] = '\0';
+        len--;
+    }
 
-    if(result[0] == '0' && (len > 1 && result[1] == '0')){
-        printf("Enter a number without trailing zeros!\n");
+
+    if((result[0] == '0' && len > 1) || (result[0] == '-' && result[1] == '0' && len >2)){
+        printf("Введите число без ведущих нулей!\n");
         return NULL;
     }
 

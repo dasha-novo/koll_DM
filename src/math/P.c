@@ -5,13 +5,14 @@
 #include "Q.h"
 #include "N.h"
 #include "Z.h"
+#include "readPoly.h"
 
 //Осипова Евгения
 Polynomial* copy_poly(Polynomial* p) {
     if (!p) return NULL;
 
     Polynomial* res = malloc(sizeof(Polynomial));
-    if (!res) { printf("Memory error\n"); return NULL; }
+    if (!res) { printf("Ошибка выделения памяти!\n"); return NULL; }
 
     res->count = p->count;
     if (p->count == 0) {
@@ -20,7 +21,7 @@ Polynomial* copy_poly(Polynomial* p) {
     }
 
     res->terms = malloc(p->count * sizeof(Term));
-    if (!res->terms) { free(res); printf("Memory error\n"); return NULL; }
+    if (!res->terms) { free(res); printf("Ошибка выделения памяти!\n"); return NULL; }
 
     int i;
     for (i = 0; i < p->count; i++) {
@@ -54,7 +55,7 @@ Polynomial* copy_poly(Polynomial* p) {
         }
         free(res->terms);
         free(res);
-        printf("Memory error\n");
+        printf("Ошибка выделения памяти!\n");
         return NULL;
     }
 
@@ -71,7 +72,7 @@ Polynomial* ADD_PP_P(Polynomial *poly1, Polynomial *poly2) {
    if (!p1 || !p2) {
        free_poly(p1);
        free_poly(p2);
-       printf("Memory error!\n");
+       printf("Ошибка выделения памяти!\n");
        return NULL;
    }
   
@@ -80,7 +81,7 @@ Polynomial* ADD_PP_P(Polynomial *poly1, Polynomial *poly2) {
    if (!result_terms) {
        free_poly(p1);
        free_poly(p2);
-       printf("Memory error!\n");
+       printf("Ошибка выделения памяти!\n");
        return NULL;
    }
   
@@ -145,14 +146,14 @@ Polynomial* ADD_PP_P(Polynomial *poly1, Polynomial *poly2) {
       
        Polynomial *result = malloc(sizeof(Polynomial));
        if (!result) {
-           printf("Memory error!\n");
+           printf("Ошибка выделения памяти!\n");
            return NULL;
        }
       
        Term *zero_term = malloc(sizeof(Term));
        if (!zero_term) {
            free(result);
-           printf("Memory error!\n");
+           printf("Ошибка выделения памяти!\n");
            return NULL;
        }
       
@@ -176,7 +177,7 @@ Polynomial* ADD_PP_P(Polynomial *poly1, Polynomial *poly2) {
            free(result_terms[t].exp);
        }
        free(result_terms);
-       printf("Memory error!\n");
+       printf("Ошибка выделения памяти!\n");
        return NULL;
    }
   
@@ -209,7 +210,7 @@ Polynomial* SUB_PP_P(Polynomial* P1, Polynomial* P2) {
     Polynomial* res = copy_poly(P1);
     if (!res) return NULL;
 
-    size_t max_terms = P1->count + P2->count;
+    int max_terms = P1->count + P2->count;
     if (max_terms > P1->count) {
         Term* tmp = realloc(res->terms, max_terms * sizeof(Term));
         if (!tmp) { free_poly(res); return NULL; }
@@ -268,13 +269,13 @@ Polynomial* SUB_PP_P(Polynomial* P1, Polynomial* P2) {
 //Осипова Евгения
 Polynomial* MUL_PQ_P(Polynomial* p, Q* q){
     if (!p || !q){
-        printf("Memory error\n");
+        printf("Ошибка выделения памяти!\n");
         return NULL;
     }
     if (p->count == 0){
         Polynomial* res = malloc(sizeof(Polynomial));
         if (!res){
-            printf("Memory error\n");
+            printf("Ошибка выделения памяти!\n");
             return NULL;
         }
         res->terms = NULL;
@@ -284,21 +285,21 @@ Polynomial* MUL_PQ_P(Polynomial* p, Q* q){
     
     Polynomial* res = malloc(sizeof(Polynomial));
     if (!res){
-        printf("Memory error\n");
+        printf("Ошибка выделения памяти!\n");
         return NULL;
     }
     
     res->count = p->count;
     res->terms = (Term*)malloc(p->count * sizeof(Term));
     if (!res->terms){
-        printf("Memory error\n");
+        printf("Ошибка выделения памяти!\n");
         free(res);
         return NULL;
     }
     for (int i = 0; i< res->count; i++){
         res->terms[i].coeff = MUL_QQ_Q(p->terms[i].coeff, q);
         if (! res->terms[i].coeff){
-            printf("Memory error\n");
+            printf("Ошибка выделения памяти!\n");
             for (int j = 0; j <i; j++){
                 free_Q(res->terms[j].coeff);
                 free(res->terms[j].exp);
@@ -311,7 +312,7 @@ Polynomial* MUL_PQ_P(Polynomial* p, Q* q){
         size_t len_exp = strlen(p->terms[i].exp);
         res->terms[i].exp = (char*)malloc(len_exp+1);
         if (!res->terms[i].exp){
-            printf("Memory error\n");
+            printf("Ошибка выделения памяти!\n");
             free_Q(res->terms[i].coeff);
             for (int j = 0; j <i; j++){
                 free_Q(res->terms[j].coeff);
@@ -417,7 +418,7 @@ char* DEG_P_N(Polynomial *p) {
         max_deg[1] = '\0';
     }
     if (!max_deg) {
-        printf("Memory error!\n");
+        printf("Ошибка выделения памяти!\n");
         return NULL;
     }
 
@@ -433,7 +434,7 @@ char* DEG_P_N(Polynomial *p) {
             size_t len = strlen(p->terms[i].exp);
             max_deg = malloc(len + 1);
             if (!max_deg) {
-                printf("Memory error!\n");
+                printf("Ошибка выделения памяти!\n");
                 return NULL;
             }
             strcpy(max_deg, p->terms[i].exp);
@@ -466,7 +467,7 @@ Polynomial* DER_P_P(Polynomial *p) {
   
    Term *result_terms = malloc(p->count * sizeof(Term));
    if (!result_terms) {
-       printf("Memory error!\n");
+       printf("Ошибка выделения памяти!\n");
        return NULL;
    }
   
@@ -534,7 +535,7 @@ Polynomial* DER_P_P(Polynomial *p) {
            free(final_terms[t].exp);
        }
        free(final_terms);
-       printf("Memory error!\n");
+       printf("Ошибка выделения памяти!\n");
        return NULL;
    }
   
@@ -589,10 +590,10 @@ Polynomial* MUL_PP_P(Polynomial* P1, Polynomial* P2) {
 
 //Осипова Евгения
 Polynomial* DIV_PP_P(Polynomial* p1, Polynomial* p2){
-    if (!p1 || !p2){ printf("Memory error\n"); return NULL; }
+    if (!p1 || !p2){ printf("Ошибка выделения памяти!\n"); return NULL; }
     
     if (p2->count == 0){
-        printf("Error! Division by zero polynomial!\n");
+        printf("Ошибка: деление на нулевой многочлен!\n");
         return NULL;
     }
     
@@ -600,14 +601,14 @@ Polynomial* DIV_PP_P(Polynomial* p1, Polynomial* p2){
     char* deg_2 = DEG_P_N(p2);
     if (!deg_1 || !deg_2) {
         free(deg_1); free(deg_2);
-        printf("Memory error\n");
+        printf("Ошибка выделения памяти!\n");
         return NULL;
     }
     
     if (p1->count == 0 || cmp_natural_str(deg_1, deg_2) < 0){ 
         free(deg_1); free(deg_2);
         Polynomial* res = malloc(sizeof(Polynomial));
-        if(!res) { printf("Memory error\n"); return NULL; }
+        if(!res) { printf("Ошибка выделения памяти!\n"); return NULL; }
         
         res->terms = NULL;
         res->count = 0;
@@ -617,10 +618,10 @@ Polynomial* DIV_PP_P(Polynomial* p1, Polynomial* p2){
     
    
     Polynomial* R = malloc(sizeof(Polynomial));
-    if (!R){ printf("Memory error\n"); return NULL; }
+    if (!R){ printf("Ошибка выделения памяти!\n"); return NULL; }
     R->count = p1->count;
     R->terms = (Term*)malloc(p1->count * sizeof(Term));
-    if (!R->terms){ free(R); printf("Memory error\n"); return NULL; }
+    if (!R->terms){ free(R); printf("Ошибка выделения памяти!\n"); return NULL; }
     
     int i;
     for (i = 0; i < p1->count; i++){
@@ -651,14 +652,14 @@ Polynomial* DIV_PP_P(Polynomial* p1, Polynomial* p2){
         }
         free(R->terms); 
         free(R);
-        printf("Memory error\n");
+        printf("Ошибка выделения памяти!\n");
         return NULL;
     }
     
     Polynomial* Q = malloc(sizeof(Polynomial));
     if (!Q){ 
         free_poly(R); 
-        printf("Memory error\n"); 
+        printf("Ошибка выделения памяти!\n"); 
         return NULL; 
     }
     Q->terms = NULL;
@@ -739,9 +740,9 @@ Polynomial* DIV_PP_P(Polynomial* p1, Polynomial* p2){
 
 //Осипова Евгения
 Polynomial* MOD_PP_P(Polynomial* A, Polynomial* B){
-    if (!A || !B){ printf("Memory error\n"); return NULL; }
+    if (!A || !B){ printf("Ошибка выделения памяти!\n"); return NULL; }
     if (B->count == 0){ 
-        printf("Error! Division by zero polynomial!\n"); 
+        printf("Ошибка: деление на нулевой многочлен!\n"); 
         return NULL; 
         
     }
@@ -889,16 +890,16 @@ MultiplierPoly* FAC_P_Q(Polynomial *p) {
 
 //Осипова Евгения
 Polynomial* NMR_P_P(Polynomial* p){
-    if (!p){ printf("Memory error\n"); return NULL; }
+    if (!p){ printf("Ошибка выделения памяти!\n"); return NULL; }
     if (p->count == 0){
         Polynomial* res = malloc(sizeof(Polynomial));
-        if(!res){ printf("Memory error\n"); return NULL; }
+        if(!res){ printf("Ошибка выделения памяти!\n"); return NULL; }
         res->terms = NULL; res->count = 0;
         return res;
     }
 
     Polynomial* der = DER_P_P(p);
-    if (!der){ printf("Memory error\n"); return NULL; }
+    if (!der){ printf("Ошибка выделения памяти!\n"); return NULL; }
 
     if (der->count == 0 || (der->count == 1 && strcmp(der->terms[0].coeff->numerator, "0") == 0)){
         free_poly(der);
@@ -908,7 +909,7 @@ Polynomial* NMR_P_P(Polynomial* p){
 
     Polynomial* gcd = GCF_PP_P(p, der);
     free_poly(der);
-    if (!gcd){ printf("Memory error\n"); return NULL; }
+    if (!gcd){ printf("Ошибка выделения памяти!\n"); return NULL; }
 
     Polynomial* res = DIV_PP_P(p, gcd);
     free_poly(gcd);

@@ -8,7 +8,7 @@ char* read_digN() {
     char buff[10000];
    
     if (fgets(buff, sizeof(buff), stdin) == NULL) {
-        printf("Error!\n");
+        printf("Ошибка при считывании!\n");
         return NULL;
     }
 
@@ -21,20 +21,20 @@ char* read_digN() {
 
 
     if (len == 0) {
-        printf("Error!\n");
+        printf("Ошибка: пустой ввод\n");
         return NULL;
     }
 
 
     if(len == 1 && buff[0] == '0'){
-        printf("Not natural number!");
+        printf("Не натуральное число!");
         return NULL;
     }
 
 
     char* result = (char*)malloc((len + 1) * sizeof(char));
     if (result == NULL) {
-        printf("Memory error!\n");
+        printf("Ошибка выделения памяти!\n");
         return NULL;
     }
 
@@ -42,15 +42,15 @@ char* read_digN() {
         if (isdigit(buff[i])) {
             result[i] = buff[i];
         } else {
-            printf("Error! Not a digit!\n");
+            printf("Ошибка: присутствует недопустимый символ!\n");
             free(result);
             return NULL;
         }
     }
 
 
-    if(result[0] == '0' && result[1] == '0'){
-        printf("Enter a number without trailing zeros!\n");
+    if(result[0] == '0' || result[1] == '0'){ //заменили и на или
+        printf("Введите число без ведущих нулей!\n");
         return NULL;
     }
 

@@ -9,7 +9,7 @@ char* ABS_Z_N(char* x){
     int len = strlen(x);
     char* result = (char*)malloc((len + 1) * sizeof(char));
     if (result == NULL) {
-        printf("Memory error!\n");
+        printf("Ошибка выделения памяти!\n");
         return NULL;
     }
 
@@ -254,68 +254,126 @@ char* MUL_ZZ_Z(const char* a, const char* b) {
 
 //Колесникова Дарья
 char* DIV_ZZ_Z(char* x, char* y) {
-   if (y == NULL || strlen(y) == 0 || (strlen(y) == 1 && y[0] == '0')) {
-       printf("Error: Division by zero!\n");
-       return NULL;
-   }
-  
-   if (x == NULL || strlen(x) == 0 || (strlen(x) == 1 && x[0] == '0')) {
-       char* result = malloc(2);
-       result[0] = '0';
-       result[1] = '\0';
-       return result;
-   }
-  
-   int sign_x = POZ_Z_D((char*)x);
-   int sign_y = POZ_Z_D((char*)y);
-   int result_sign = sign_x * sign_y;
-  
-   char* abs_x = ABS_Z_N(x);
-   char* abs_y = ABS_Z_N(y);
-  
-   if (abs_x == NULL || abs_y == NULL) {
-       free(abs_x);
-       free(abs_y);
-       return NULL;
-   }
+    if (y == NULL || strlen(y) == 0 ||
+        (strlen(y) == 1 && y[0] == '0')) {
+        printf("Ошибка: деление на ноль!\n");
+        return NULL;
+    }
 
-   char* quotient = DIV_NN_N(abs_x, abs_y);
-  
-   if (quotient == NULL) {
-       free(abs_x);
-       free(abs_y);
-       return NULL;
-   }
-  
-   char* result;
-  
-   if (result_sign == -1) {
-       if (strlen(quotient) == 1 && quotient[0] == '0') {
-           result = malloc(2);
-           result[0] = '0';
-           result[1] = '\0';
-       } else {
-           result = malloc(strlen(quotient) + 2);
-           result[0] = '-';
-           strcpy(result + 1, quotient);
-       }
-   } else {
-       result = malloc(strlen(quotient) + 1);
-       strcpy(result, quotient);
-   }
+    if (x == NULL || strlen(x) == 0 ||
+        (strlen(x) == 1 && x[0] == '0')) {
 
+        char* result = malloc(2);
 
-   free(abs_x);
-   free(abs_y);
-   free(quotient);
-  
-   return result;
+        if (result) {
+            result[0] = '0';
+            result[1] = '\0';
+        }
+
+        return result;
+    }
+
+    int sign_x = POZ_Z_D(x);
+    int sign_y = POZ_Z_D(y);
+
+    int result_sign = sign_x * sign_y;
+
+    char* abs_x = ABS_Z_N(x);
+    char* abs_y = ABS_Z_N(y);
+
+    if (abs_x == NULL || abs_y == NULL) {
+        free(abs_x);
+        free(abs_y);
+        return NULL;
+    }
+
+    // Деление модулей
+    char* quotient = DIV_NN_N(abs_x, abs_y);
+
+    if (quotient == NULL) {
+        free(abs_x);
+        free(abs_y);
+        return NULL;
+    }
+
+    // Остаток от деления модулей
+    char* remainder = MOD_NN_N(abs_x, abs_y);
+
+    if (remainder == NULL) {
+        free(abs_x);
+        free(abs_y);
+        free(quotient);
+        return NULL;
+    }
+
+    // Проверяем: есть ли ненулевой остаток
+    int has_remainder =
+        !(strlen(remainder) == 1 && remainder[0] == '0');
+
+    // Если знаки разные и остаток не ноль,
+    // увеличиваем модуль частного на 1
+    if (result_sign == -1 && has_remainder) {
+
+        char* temp = ADD_ZZ_Z(quotient, "1");
+
+        free(quotient);
+        quotient = temp;
+
+        if (quotient == NULL) {
+            free(abs_x);
+            free(abs_y);
+            free(remainder);
+            return NULL;
+        }
+    }
+
+    free(remainder);
+
+    char* result;
+
+    // Навешиваем знак
+    if (result_sign == -1 &&
+        !(strlen(quotient) == 1 && quotient[0] == '0')) {
+
+        result = malloc(strlen(quotient) + 2);
+
+        if (result == NULL) {
+            free(abs_x);
+            free(abs_y);
+            free(quotient);
+            return NULL;
+        }
+
+        result[0] = '-';
+        strcpy(result + 1, quotient);
+
+    } else {
+
+        result = malloc(strlen(quotient) + 1);
+
+        if (result == NULL) {
+            free(abs_x);
+            free(abs_y);
+            free(quotient);
+            return NULL;
+        }
+
+        strcpy(result, quotient);
+    }
+
+    free(abs_x);
+    free(abs_y);
+    free(quotient);
+
+    return result;
 }
+
+
 
 //Колесникова Дарья
 char* MOD_ZZ_Z(char* x, char* y) {
    if (y == NULL || strlen(y) == 0 || (strlen(y) == 1 && y[0] == '0')) {
-       printf("Error: Division by zero!\n");
+       printf("Ошибка: деление на ноль!\n");
        return NULL;
    }
    if (x == NULL || strlen(x) == 0 || (strlen(x) == 1 && x[0] == '0')) {
@@ -339,6 +397,7 @@ char* MOD_ZZ_Z(char* x, char* y) {
    if (product == NULL) {
        return NULL;
    }
+
    char* remainder = SUB_ZZ_Z(x, product);
    free(product);
   
