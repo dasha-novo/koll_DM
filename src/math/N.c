@@ -27,6 +27,18 @@ int COM_NN_D(char* x, char* y){
     return 0;
 }
 
+char* TRANS_N_Z(char* x) {
+    if (!x) return NULL;
+    
+    int len = strlen(x);
+    char* result = (char*)malloc(len + 1);
+    if (!result) return NULL;
+    
+    strcpy(result, x);
+    
+    return result;
+}
+
 //Новожилова Дарья
 char* NZER_N_B(char* x) {
     int len = strlen(x);

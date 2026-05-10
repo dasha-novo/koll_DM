@@ -17,5 +17,6 @@ char* DIV_NN_N(char* A, char* B);
 char* MOD_NN_N(char* a, char* b);
 char* GCF_NN_N(char* a, char* b);
 char* LCM_NN_N(char* a, char* b);
+char* TRANS_N_Z(char* x);
 
 #endif
