@@ -117,7 +117,7 @@ char* ADD_ZZ_Z(char* a, char* b){
 
 
     if(asign == bsign){
-        char* res = ADD_NN_N(an, bn);
+        char* res = TRANS_N_Z(ADD_NN_N(an, bn));
 
 
         if(asign == -1){
@@ -138,7 +138,7 @@ char* ADD_ZZ_Z(char* a, char* b){
         char* min_ab = (cmp == 2) ? bn : an;
 
 
-        char* res = SUB_NN_N(max_ab, min_ab);
+        char* res = TRANS_N_Z(SUB_NN_N(max_ab, min_ab));
         if(max_sign == -1){
             char* neg_res = MUL_ZM_Z(res);
             free(max_ab);
@@ -175,7 +175,7 @@ char* SUB_ZZ_Z(char* a, char* b){
 
 
     if(asign != bsign){
-        char* res = ADD_NN_N(an, bn);
+        char* res = TRANS_N_Z(ADD_NN_N(an, bn));
 
 
         if(asign == -1){
@@ -195,7 +195,7 @@ char* SUB_ZZ_Z(char* a, char* b){
         char* min_ab = (cmp == 2) ? bn : an;
 
 
-        char* res = SUB_NN_N(max_ab, min_ab);
+        char* res = TRANS_N_Z(SUB_NN_N(max_ab, min_ab));
         if((cmp == 2 && asign == -1) || (cmp == 1 && bsign == 1)){
             char* neg_res = MUL_ZM_Z(res);
             free(max_ab);
@@ -234,7 +234,7 @@ char* MUL_ZZ_Z(const char* a, const char* b) {
        return zero;
    }
   
-   char* result = MUL_NN_N(abs_a, abs_b);
+   char* result = TRANS_N_Z(MUL_NN_N(abs_a, abs_b));
    free(abs_a);
    free(abs_b);
   
@@ -287,7 +287,7 @@ char* DIV_ZZ_Z(char* x, char* y) {
         return NULL;
     }
 
-    char* quotient = DIV_NN_N(abs_x, abs_y);
+    char* quotient = TRANS_N_Z(DIV_NN_N(abs_x, abs_y));
 
     if (quotient == NULL) {
         free(abs_x);
