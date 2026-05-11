@@ -90,9 +90,10 @@ Q* ADD_QQ_Q(Q* frac1, Q* frac2){
 
 
     char* nok = LCM_NN_N(frac1->denominator, frac2->denominator);
+    char* z_nok = TRANS_N_Z(nok);
    
-    char* mul_n1 = DIV_ZZ_Z(nok, frac1->denominator);
-    char* mul_n2 = DIV_ZZ_Z(nok, frac2->denominator);
+    char* mul_n1 = DIV_ZZ_Z(z_nok, frac1->denominator);
+    char* mul_n2 = DIV_ZZ_Z(z_nok, frac2->denominator);
 
 
     char* n1 = MUL_ZZ_Z(frac1->numerator, mul_n1);
@@ -100,7 +101,7 @@ Q* ADD_QQ_Q(Q* frac1, Q* frac2){
 
 
     newfrac->numerator = ADD_ZZ_Z(n1,n2);
-    newfrac->denominator = nok;
+    newfrac->denominator = z_nok;
    
     newfrac->nn = strlen(newfrac->numerator);
     newfrac->dm = strlen(newfrac->denominator);

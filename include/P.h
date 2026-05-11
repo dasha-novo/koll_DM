@@ -28,6 +28,5 @@ Polynomial* DIV_PP_P(Polynomial* p1, Polynomial* p2);
 Polynomial* MOD_PP_P(Polynomial* A, Polynomial* B);
 Polynomial* GCF_PP_P(Polynomial* A, Polynomial* B);
 Polynomial* DER_P_P(Polynomial* p);
-Polynomial* NMR_P_P(Polynomial* p);
 
 #endif

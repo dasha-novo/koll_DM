@@ -26,7 +26,6 @@ static PolyOperation poly_operations[] = {
     {9, "Остаток", "Остаток от деления", 2},
     {10, "НОД", "Наибольший общий делитель многочленов", 2},
     {11, "Производная", "Производная многочлена", 1},
-    {12, "Кратные корни", "Преобразование — кратные корни в простые", 1},
     {0, NULL, NULL, 0}
 };
 
@@ -222,15 +221,6 @@ void handle_polynomial_operations(Context* ctx) {
                 result_p = DER_P_P(ctx->polynom1);
                 if (result_p) {
                     printf("P1' = ");
-                    print_poly(result_p);
-                    printf("\n");
-                }
-                break;
-                
-            case 12: // NMR_P_P
-                result_p = NMR_P_P(ctx->polynom1);
-                if (result_p) {
-                    printf("Преобразованный многочлен: ");
                     print_poly(result_p);
                     printf("\n");
                 }
