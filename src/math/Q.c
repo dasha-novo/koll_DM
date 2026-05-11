@@ -72,7 +72,7 @@ Q* RED_Q_Q(Q* frac){
     if (!newfrac) return NULL;
 
 
-    char* nod = GCF_NN_N(ABS_Z_N(frac->numerator), frac->denominator);
+    char* nod = TRANS_N_Z(GCF_NN_N(ABS_Z_N(frac->numerator), frac->denominator));
 
 
     newfrac->numerator = DIV_ZZ_Z(frac->numerator, nod);
@@ -89,7 +89,7 @@ Q* ADD_QQ_Q(Q* frac1, Q* frac2){
     Q* newfrac = malloc(10*(sizeof(Q)));
 
 
-    char* nok = LCM_NN_N(frac1->denominator, frac2->denominator);
+    char* nok = TRANS_N_Z(LCM_NN_N(frac1->denominator, frac2->denominator));
     char* z_nok = TRANS_N_Z(nok);
    
     char* mul_n1 = DIV_ZZ_Z(z_nok, frac1->denominator);
@@ -127,10 +127,10 @@ Q* SUB_QQ_Q(Q* a, Q* b) {
 
    // Faster and avoids expensive LCM/GCD reductions:
    // a/b - c/d = (a*d - c*b) / (b*d)
-   char* ad = MUL_ZZ_Z(a->numerator, b->denominator);
+   char* ad = MUL_ZZ_Z(a->numerator, TRANS_N_Z(b->denominator));
    if (!ad) return NULL;
 
-   char* cb = MUL_ZZ_Z(b->numerator, a->denominator);
+   char* cb = MUL_ZZ_Z(b->numerator, TRANS_N_Z(a->denominator));
    if (!cb) { free(ad); return NULL; }
 
    char* result_num = SUB_ZZ_Z(ad, cb);
@@ -211,12 +211,12 @@ Q* DIV_QQ_Q(Q* Q1, Q* Q2) {
         return NULL;
     }
 
-    char* res_num = MUL_ZZ_Z(Q1->numerator, Q2->denominator);
+    char* res_num = MUL_ZZ_Z(Q1->numerator, TRANS_N_Z(Q2->denominator));
     if (res_num == NULL) {
         return NULL;
     }
 
-    char* res_den = MUL_ZZ_Z(Q1->denominator, Q2->numerator);
+    char* res_den = TRANS_Z_N(MUL_ZZ_Z(TRANS_N_Z(Q1->denominator), Q2->numerator));
     if (res_den == NULL) {
         free(res_num);
         return NULL;
